@@ -1,5 +1,5 @@
 {
-  "name": "styledwind",
+  "name": "windstyle",
   "version": "0.1.0",
   "description": "A lightweight styled components library optimized for Tailwind CSS",
   "main": "dist/index.js",
@@ -25,6 +25,14 @@
   ],
   "author": "Bruno Garcia",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Brunowilliang/windstyle.git"
+  },
+  "homepage": "https://github.com/Brunowilliang/windstyle",
+  "bugs": {
+    "url": "https://github.com/Brunowilliang/windstyle/discussions"
+  },
   "peerDependencies": {
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0"
