@@ -1,6 +1,6 @@
 'use client'
 
-import { styled } from 'styledwind'
+import { styled } from 'windstyle'
 
 export const Button = styled('button', {
 	base: 'px-4 py-2 rounded-md transition-all cursor-pointer hover:scale-105 active:scale-95 duration-200',
@@ -39,7 +39,7 @@ export const Button = styled('button', {
 export function StyledExample() {
 	return (
 		<div className='space-y-6'>
-			<h2 className='text-2xl font-bold'>Styledwind Examples</h2>
+			<h2 className='text-2xl font-bold'>Windstyle Examples</h2>
 
 			<div className='flex gap-4'>
 				<Button>Default Button</Button>
