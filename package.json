@@ -1,0 +1,14 @@
+{
+  "name": "styledwind-workspace",
+  "private": true,
+  "workspaces": [
+    "lib",
+    "app"
+  ],
+  "scripts": {
+    "build:lib": "cd lib && yarn build",
+    "dev:lib": "cd lib && yarn dev",
+    "dev:app": "cd app && yarn dev",
+    "test": "cd lib && yarn test"
+  }
+}
