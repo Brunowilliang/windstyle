@@ -1,12 +1,19 @@
 import { createElement, forwardRef } from 'react'
-import type { JSX, ElementType, ReactElement } from 'react'
-import type * as Types from './types'
-import { evaluateClassName, cn } from './utils'
 
-type HTMLTagName = keyof JSX.IntrinsicElements
+import { evaluateClassName } from '../utils/evaluateClassName'
+import { cn } from '../utils/cn'
+
+import type { ElementType, ReactElement } from 'react'
+import type {
+	HTMLTagName,
+	IStyled,
+	StyledProps,
+	ComponentConfig,
+} from '../types'
+
 const domElements: HTMLTagName[] = []
 
-export const styled: Types.Styled = function (
+export const styled: IStyled = function (
 	component,
 	{
 		base: defaultClassName,
@@ -33,7 +40,7 @@ export const styled: Types.Styled = function (
 			as: asProp,
 			className,
 			...props
-		}: Types.StyledProps<As, any, any> & { className?: string },
+		}: StyledProps<As, any, any> & { className?: string },
 		ref: any,
 	): ReactElement<any, any> => {
 		const Tag = (asProp || component) as ElementType
@@ -67,11 +74,11 @@ export const styled: Types.Styled = function (
 	}
 
 	return Component
-} as Types.Styled
+} as IStyled
 
 for (const domElement of domElements) {
 	styled[domElement as keyof typeof styled] = ((
 		className: string,
-		config?: Omit<Types.ComponentConfig<any, any, any>, 'base'>,
+		config?: Omit<ComponentConfig<any, any, any>, 'base'>,
 	) => styled(domElement as ElementType, { ...config, base: className })) as any
 }

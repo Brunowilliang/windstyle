@@ -1,6 +1,6 @@
 'use client'
 
-import { styled } from 'windstyle'
+import { styled } from 'use-styled'
 
 export const Button = styled('button', {
 	base: 'px-4 py-2 rounded-md transition-all cursor-pointer hover:scale-105 active:scale-95 duration-200',
@@ -15,6 +15,11 @@ export const Button = styled('button', {
 			md: 'text-base',
 			lg: 'text-lg px-6 py-3',
 		},
+		variant: {
+			primary: 'bg-blue-500 text-white hover:bg-blue-600',
+			secondary: 'bg-gray-200 text-gray-800 hover:bg-gray-300',
+			danger: 'bg-red-500 text-white hover:bg-red-600',
+		},
 		outlined: {
 			true: 'bg-transparent border border-current',
 			false: '',
@@ -27,7 +32,7 @@ export const Button = styled('button', {
 	compoundVariants: [
 		{
 			intent: 'primary',
-			outlined: true,
+			outlined: 'true',
 			class: 'text-blue-500 border-blue-500 hover:bg-blue-50',
 		},
 	],
@@ -39,7 +44,7 @@ export const Button = styled('button', {
 export function StyledExample() {
 	return (
 		<div className='space-y-6'>
-			<h2 className='text-2xl font-bold'>Windstyle Examples</h2>
+			<h2 className='text-2xl font-bold'>use-styled Examples</h2>
 
 			<div className='flex gap-4'>
 				<Button>Default Button</Button>
@@ -49,9 +54,7 @@ export function StyledExample() {
 
 			<div className='flex gap-4'>
 				<Button outlined>Outlined</Button>
-				<Button intent='secondary' outlined>
-					Secondary Outlined
-				</Button>
+				<Button intent='secondary'>Secondary Outlined</Button>
 			</div>
 		</div>
 	)

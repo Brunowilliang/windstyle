@@ -1,11 +1,6 @@
 import type { ElementType, ReactElement, ComponentPropsWithRef } from 'react';
 
-// Adicionar a declaração do namespace JSX se não estiver disponível
-declare namespace JSX {
-  interface IntrinsicElements {
-    [elemName: string]: any;
-  }
-}
+export type HTMLTagName = keyof JSX.IntrinsicElements
 
 /**
  * Creates a Prop Types from a VariantRecord.
@@ -141,29 +136,13 @@ type ToIntrinsicElementIfPossible<As> = As extends keyof HTMLElementTagNameMap
 /**
  * Extract Props from a Component
  */
-export type GetProps<T> = T extends Component<
+export type GetStyledProps<T> = T extends Component<
   infer DefaultAs,
   infer Variants,
   infer DefaultVariants
 >
   ? StyledProps<DefaultAs, Variants, DefaultVariants>
   : InferAnyComponentProps<T>;
-
-/**
- * Extract Ref from a Component
- * Returns the element type for the component, ready to use with useRef
- */
-export type GetRef<T> = T extends Component<
-  infer DefaultAs,
-  any,
-  any
->
-  ? DefaultAs extends keyof HTMLElementTagNameMap
-    ? HTMLElementTagNameMap[DefaultAs]
-    : DefaultAs extends new (...args: any) => infer Instance
-      ? Instance
-      : never
-  : never;
 
   
 type GetPropsWithoutVariantsKeys<
@@ -178,27 +157,6 @@ type GetPropsWithoutVariantsKeys<
 /**
  * Evaluates props based on Variants. Variants that have a Default value become optional.
  * It also merges with the Component's Props, replacing the ones that are variants.
- *   Ex.:
- *   const Component = styled(
- *     ({ color, checked, x }: { color: string, checked: string, x: string }) => null, {
- *     variants: {
- *       color: {
- *         gray: 'foo',
- *         red: 'bar',
- *       },
- *       checked: (value: boolean) => value ? 'x' : 'y'
- *     },
- *     defaultVariants: {
- *       color: 'gray'
- *     }
- *   })
- *
- *   <Component x="y" color="red" checked={false} /> // ✅
- *   <Component color="red" checked={false} /> // ❌ missing `x` prop
- *   <Component x={1} color="red" checked={false} /> // ❌ `x` prop should be string
- *   <Component x="y" color="red" checked="x" /> // ❌ `checked` prop should be boolean
- *   <Component x="y" color="red" /> // ❌ missing `checked` prop
- *   <Component x="y" checked={true} /> // ✅
  */
 export type StyledProps<
   As extends ElementType,
@@ -227,7 +185,7 @@ type StyledFunction = <
  *   styled.a('text-sm', { variants: { ... } })
  *   styled.a('text-sm')
  */
-export type Styled = StyledFunction &
+export type IStyled = StyledFunction &
   {
     [DefaultAs in keyof HTMLElementTagNameMap]: StyledTagFunction<DefaultAs>;
   };
@@ -242,25 +200,3 @@ export type StyledTagFunction<DefaultAs extends keyof HTMLElementTagNameMap> = <
     'base'
   >
 ) => Component<DefaultAs, Variants, DefaultVariants>;
-
-/**
- * Configuration to create a Component with variants
- */
-export interface ClassNameFactorConfig<
-  Variants extends VariantsRecord,
-  DefaultVariants
-> {
-  className?: string;
-  variants: Variants;
-  defaultVariants?: DefaultVariants;
-  compoundVariants?: Array<CompoundVariants<Variants>>;
-}
-
-export type ClassNameFactor = <
-  Variants extends VariantsRecord,
-  DefaultVariants extends Partial<EvaluateRecordProps<Variants>>
->(
-  config: ClassNameFactorConfig<Variants, DefaultVariants>
-) => (
-  props: EvaluatePropsWithDefaultVariants<Variants, DefaultVariants>
-) => string;

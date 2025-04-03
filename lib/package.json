@@ -1,6 +1,6 @@
 {
-  "name": "windstyle",
-  "version": "0.1.0",
+  "name": "use-styled",
+  "version": "0.1.1",
   "description": "A lightweight styled components library optimized for Tailwind CSS",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -27,11 +27,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Brunowilliang/windstyle.git"
+    "url": "https://github.com/Brunowilliang/use-styled.git"
   },
-  "homepage": "https://github.com/Brunowilliang/windstyle",
+  "homepage": "https://github.com/Brunowilliang/use-styled",
   "bugs": {
-    "url": "https://github.com/Brunowilliang/windstyle/discussions"
+    "url": "https://github.com/Brunowilliang/use-styled/discussions"
   },
   "peerDependencies": {
     "react": ">=16.8.0",

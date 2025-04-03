@@ -1,19 +1,19 @@
-# Windstyle
+# use-styled
 
 A lightweight styled components library optimized for Tailwind CSS.
 
 ## Installation
 
 ```bash
-npm install windstyle
+npm install use-styled
 # or
-yarn add windstyle
+yarn add use-styled
 ```
 
 ## Basic Usage
 
 ```tsx
-import { styled } from 'windstyle';
+import { styled } from 'use-styled';
 
 const Button = styled('button', {
   base: 'px-4 py-2 rounded-md',

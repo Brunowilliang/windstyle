@@ -1,14 +1,5 @@
-import { clsx, type ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
-import type { VariantsRecord } from './types';
-
-/**
- * Combines class names using clsx and tailwind-merge
- * This allows for proper class merging with Tailwind CSS
- */
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
+import { cn } from "./cn";
+import type { VariantsRecord } from "../types";
 
 /**
  *
