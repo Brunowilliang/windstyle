@@ -2,11 +2,13 @@ import { cn } from "./cn";
 import type { VariantsRecord } from "../types";
 
 /**
- *
- * @param props
- * @param variants
- * @param defaultClassName
- * @returns
+ * Evaluates conditional classes based on props and variants
+ * @param props Props passed to the component
+ * @param variants Variants definition
+ * @param defaultVariants Default values for variants
+ * @param compoundVariants Combinations of variants
+ * @param defaultClassName Base class
+ * @returns String with concatenated classes
  */
 export const evaluateClassName = (
   props: Record<string, any>,
@@ -18,6 +20,11 @@ export const evaluateClassName = (
   const classNames = [defaultClassName, props.className || ''];
   let compoundedClassName = '';
   let compoundedDefaults: Record<string, any> = {};
+
+  // Normalizes boolean values to strings when needed
+  const normalizeValue = (value: any): any => {
+    return typeof value === 'boolean' ? String(value) : value;
+  };
 
   // get a variant value from props
   const getVariantValue = (key: string, selectFromCompounded = false) => {
@@ -46,20 +53,11 @@ export const evaluateClassName = (
         const propValue = getVariantValue(key);
         const selectorValue = selector[key];
         
-        // Converter valores booleanos para strings se necessário
-        if (typeof propValue === 'boolean' && typeof selectorValue === 'boolean') {
-          return propValue === selectorValue;
-        }
+        // Normalizes values for comparison
+        const normalizedPropValue = normalizeValue(propValue);
+        const normalizedSelectorValue = normalizeValue(selectorValue);
         
-        if (typeof propValue === 'boolean' && typeof selectorValue === 'string') {
-          return String(propValue) === selectorValue;
-        }
-        
-        if (typeof selectorValue === 'boolean' && typeof propValue === 'string') {
-          return propValue === String(selectorValue);
-        }
-        
-        return propValue === selectorValue;
+        return normalizedPropValue === normalizedSelectorValue;
       });
 
       if (selectorMatches && selectorPrecision >= lastSelectorPrecision) {
@@ -77,8 +75,8 @@ export const evaluateClassName = (
     if (typeof variant === 'function') {
       classNames.push(variant(value, props, variants)?.trim());
     } else {
-      // Converter valores booleanos para strings "true"/"false" para acessar o objeto de variantes
-      const lookupValue = typeof value === 'boolean' ? String(value) : value;
+      // Normalizes boolean values to strings for variant object access
+      const lookupValue = normalizeValue(value);
       classNames.push(variant[lookupValue]?.trim());
     }
   }

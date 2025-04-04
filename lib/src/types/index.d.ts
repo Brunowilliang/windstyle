@@ -1,4 +1,5 @@
 import type { ElementType, ReactElement, ComponentPropsWithRef } from 'react';
+import type { Props, TransformProps, ExtractPropDefinition } from '../useStyledProps';
 
 export type HTMLTagName = keyof JSX.IntrinsicElements
 
@@ -74,23 +75,50 @@ export type CompoundVariants<
 > & {
   defaultTo?: Partial<
     {
-      [k in Keys]: keyof Variants[k];
+      [k in Keys]: (Variants[k] extends Record<infer K, string> 
+        ? K extends "true" | "false" 
+          ? boolean | "true" | "false" 
+          : keyof Variants[k]
+        : keyof Variants[k]);
     }
   >;
   class?: string;
+};
+
+// More direct definition of a variants map
+type DirectVariantsMap<T extends Record<string, any>> = {
+  [K in keyof T]?: 
+    // Constant array (as const)
+    T[K] extends readonly [infer F, ...infer R] 
+      ? { [V in T[K][number] & (string | number | symbol)]?: string }
+    // Normal array
+    : T[K] extends (infer U)[] 
+      ? Record<string, string>
+      : T[K] extends boolean | BooleanConstructor
+        ? { true?: string; false?: string; [key: `${boolean}`]: string }
+        : T[K] extends number | NumberConstructor
+          ? Record<string | number, string>
+          : T[K] extends string
+            ? { [V in T[K] & string]?: string }
+            : Record<string, string>
 };
 
 /**
  * Configuration to create a Component with variants
  */
 export interface ComponentConfig<
+  ContextType extends Record<string, any> | undefined,
   Variants extends VariantsRecord,
   DefaultVariants,
   DefaultAs extends ElementType
 > {
+  name?: string;
+  props?: ContextType extends TransformProps<any> ? ContextType : Record<string, any>;
   base?: string;
-  variants?: Variants;
-  transient?: (keyof Variants)[];
+  variants?: ContextType extends Props<infer D> 
+    ? DirectVariantsMap<D> 
+    : Variants;
+  styleOnly?: (keyof Variants)[]; // Properties that are used only for styling and should not be passed to the DOM
   defaultVariants?: DefaultVariants;
   compoundVariants?: Array<CompoundVariants<Variants>>;
   defaultProps?: Partial<
@@ -104,21 +132,28 @@ export interface ComponentConfig<
  * = Partial<Infer<DefaultAs, Variants, {}>>
  * But, that breaks `styled`, as it makes all props optional.
  */
-type GetDefaultVariants<Variants extends VariantsRecord> = Partial<
-  EvaluateRecordProps<Variants>
->;
+type GetDefaultVariants<Variants extends VariantsRecord> = Partial<{
+  [Prop in keyof Variants]: Variants[Prop] extends Record<infer K, string>
+    ? K extends "true" | "false" | true | false
+      ? boolean | "true" | "false"
+      : K
+    : Variants[Prop] extends (arg: any) => any
+    ? any
+    : never;
+}>;
 
 /**
  * Styled Component. Supports the As prop, which changes the prop types based on the component
  * it's rendering.
  */
 export interface Component<
+  ContextType extends Record<string, any> | undefined,
   DefaultAs extends ElementType,
   Variants extends VariantsRecord,
   DefaultVariants
 > {
   <As extends ElementType = DefaultAs>(
-    props: StyledProps<As, Variants, DefaultVariants>
+    props: StyledProps<As, ContextType, Variants, DefaultVariants>
   ): ReactElement<any, any>;
 
   displayName?: string | undefined;
@@ -137,11 +172,12 @@ type ToIntrinsicElementIfPossible<As> = As extends keyof HTMLElementTagNameMap
  * Extract Props from a Component
  */
 export type GetStyledProps<T> = T extends Component<
+  infer ContextType,
   infer DefaultAs,
   infer Variants,
   infer DefaultVariants
 >
-  ? StyledProps<DefaultAs, Variants, DefaultVariants>
+  ? StyledProps<DefaultAs, ContextType, Variants, DefaultVariants>
   : InferAnyComponentProps<T>;
 
   
@@ -160,23 +196,29 @@ type GetPropsWithoutVariantsKeys<
  */
 export type StyledProps<
   As extends ElementType,
+  ContextType extends Record<string, any> | undefined,
   Variants extends VariantsRecord,
   DefaultVariants
 > = { as?: As } & GetPropsWithoutVariantsKeys<As, Variants> &
-  EvaluatePropsWithDefaultVariants<Variants, DefaultVariants>;
+  // Using direct inference from variants instead of EvaluatePropsWithDefaultVariants for better typing
+  (ContextType extends TransformProps<infer P>
+    ? Partial<TransformProps<P>>  // Use TransformProps for the correct type
+    : EvaluatePropsWithDefaultVariants<Variants, DefaultVariants>) & 
+  (ContextType extends Record<string, any> ? Partial<ContextType> : {});
 
 /**
  * Styled Function should infer the Component, the Variants object and the Default
  * Variants values so the created component has the right props.
  */
 type StyledFunction = <
+  ContextType extends Record<string, any> | undefined,
   DefaultAs extends ElementType,
   Variants extends VariantsRecord = {},
   DefaultVariants extends GetDefaultVariants<Variants> = {}
-  >(
-    component: DefaultAs,
-  config: ComponentConfig<Variants, DefaultVariants, DefaultAs>
-) => Component<DefaultAs, Variants, DefaultVariants>;
+>(
+  component: DefaultAs,
+  config: ComponentConfig<ContextType, Variants, DefaultVariants, DefaultAs>
+) => Component<ContextType, DefaultAs, Variants, DefaultVariants>;
 
 /**
  * Styled should be callable by:
@@ -187,16 +229,17 @@ type StyledFunction = <
  */
 export type IStyled = StyledFunction &
   {
-    [DefaultAs in keyof HTMLElementTagNameMap]: StyledTagFunction<DefaultAs>;
+    [DefaultAs in HTMLTagName]: StyledTagFunction<DefaultAs>;
   };
 
-export type StyledTagFunction<DefaultAs extends keyof HTMLElementTagNameMap> = <
+export type StyledTagFunction<DefaultAs extends HTMLTagName> = <
+  ContextType extends Record<string, any> | undefined,
   Variants extends VariantsRecord = {},
   DefaultVariants extends GetDefaultVariants<Variants> = {}
 >(
   cx: string,
   config?: Omit<
-    ComponentConfig<Variants, DefaultVariants, DefaultAs>,
+    ComponentConfig<ContextType, Variants, DefaultVariants, DefaultAs>,
     'base'
   >
-) => Component<DefaultAs, Variants, DefaultVariants>;
+) => Component<ContextType, DefaultAs, Variants, DefaultVariants>;

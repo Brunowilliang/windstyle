@@ -1,6 +1,6 @@
 {
   "name": "use-styled",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A lightweight styled components library optimized for Tailwind CSS",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -9,8 +9,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/index.tsx --format cjs,esm --dts",
-    "dev": "tsup src/index.tsx --format cjs,esm --dts --watch",
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
     "lint": "eslint src/**/*.ts*",
     "clean": "rm -rf dist",
     "test": "jest",
