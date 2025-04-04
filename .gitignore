@@ -16,6 +16,11 @@ dist/
 .turbo/
 .vercel/
 
+# teste
+teste
+teste_2
+teste_3
+
 # Arquivos de ambiente
 .env
 .env.local

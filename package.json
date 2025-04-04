@@ -3,12 +3,14 @@
   "private": true,
   "workspaces": [
     "lib",
-    "app"
+    "app",
+    "mobile"
   ],
   "scripts": {
     "build": "cd lib && yarn build && cd .. && yarn install",
+    "clean": "cd lib && yarn clean && cd .. && rm -rf app/.next",
     "dev:lib": "cd lib && yarn dev",
-    "dev:app": "cd app && yarn dev",
+    "dev": "cd app && yarn dev",
     "test": "cd lib && yarn test",
     "publish:lib": "cd lib && yarn publish"
   }
