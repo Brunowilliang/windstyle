@@ -20,7 +20,7 @@
     "resolveJsonModule": true
   },
   "include": [
-    "lib/src"
+    "packages/use-styled/src"
   ],
   "exclude": [
     "node_modules",

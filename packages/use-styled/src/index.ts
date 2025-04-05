@@ -1,5 +1,5 @@
 export { useStyled } from './useStyled'
-export { useStyledProps } from './useStyledProps'
+export { useStyledContext } from './useStyledContext'
 export { useStyledSlots } from './useStyledSlots'
 export { cn } from './utils/cn'
 export type { GetStyledProps } from './types'

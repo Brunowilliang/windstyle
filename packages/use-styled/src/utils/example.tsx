@@ -1,9 +1,9 @@
 // Example of using the use-styled library
-import { useStyled, useStyledProps, useStyledSlots } from '../index'
+import { useStyled, useStyledContext, useStyledSlots } from '../index'
 
-// 1. Define the variant props for the component
+// 1. Define the variant context for the component
 // Using the new syntax with arrays for union types and constructors for primitive types
-export const ButtonProps = useStyledProps({
+export const ButtonContext = useStyledContext({
 	// Array of strings = direct union type (with as const)
 	variant: ['primary', 'secondary', 'danger'] as const,
 	// Array of strings = direct union type (with as const)
@@ -18,7 +18,7 @@ export const ButtonProps = useStyledProps({
 
 export const ButtonFrame = useStyled('button', {
 	name: 'ButtonFrame',
-	props: ButtonProps, // The type system now recognizes the types defined above
+	context: ButtonContext, // The type system now recognizes the types defined above
 	base: 'rounded-md focus:outline-none focus:ring-2 transition-all',
 	variants: {
 		variant: {
@@ -65,10 +65,10 @@ export const ButtonFrame = useStyled('button', {
 	styleOnly: ['variant', 'size', 'count', 'shape'],
 })
 
-// 3. Create child components that will use the same props
+// 3. Create child components that will use the same context
 export const ButtonText = useStyled('p', {
 	name: 'ButtonText',
-	props: ButtonProps, // Same props object
+	context: ButtonContext, // Same context object
 	base: 'font-medium',
 	variants: {
 		variant: {
@@ -88,8 +88,8 @@ export const ButtonText = useStyled('p', {
 	},
 })
 
-// Example of a component with different props
-export const OtherButtonProps = useStyledProps({
+// Example of a component with different context
+export const OtherButtonContext = useStyledContext({
 	// Using arrays for union types with as const
 	variant: ['blue', 'red', 'green'] as const,
 	size: ['small', 'medium', 'large'] as const,
@@ -99,10 +99,10 @@ export const OtherButtonProps = useStyledProps({
 
 export const ButtonIcon = useStyled('span', {
 	name: 'ButtonIcon',
-	props: OtherButtonProps, // Using a DIFFERENT props object
+	context: OtherButtonContext, // Using a DIFFERENT context object
 	base: 'inline-flex items-center justify-center mr-2',
 	variants: {
-		// Using the same approach with different props
+		// Using the same approach with different context
 		variant: {
 			// Options are: 'blue' | 'red' | 'green'
 			blue: 'text-blue-200',
@@ -123,10 +123,10 @@ export const ButtonIcon = useStyled('span', {
 	},
 })
 
-// Component without defined props
+// Component without defined context
 export const ButtonBadge = useStyled('span', {
 	name: 'ButtonBadge',
-	// NO props
+	// NO context
 	base: 'absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center',
 })
 
@@ -137,10 +137,10 @@ export const Button = useStyledSlots(ButtonFrame, {
 		Icon: ButtonIcon,
 		Badge: ButtonBadge,
 	},
-	props: ButtonProps,
+	context: ButtonContext,
 })
 
-// 5. Final usage - Props are propagated only to components with the same props
+// 5. Final usage - Props are propagated only to components with the same context
 const ExampleComponent = () => {
 	return (
 		<div className='space-y-6'>
@@ -163,10 +163,10 @@ const ExampleComponent = () => {
 	)
 }
 
-// Example without useStyledProps for comparison
-export const NoPropsButtonFrame = useStyled('button', {
-	name: 'NoPropsButtonFrame',
-	// No props: ButtonProps
+// Example without useStyledContext for comparison
+export const NoContextButtonFrame = useStyled('button', {
+	name: 'NoContextButtonFrame',
+	// No context
 	base: 'rounded-md focus:outline-none focus:ring-2 transition-all',
 	variants: {
 		variant: {
@@ -182,9 +182,9 @@ export const NoPropsButtonFrame = useStyled('button', {
 	},
 })
 
-export const NoPropsButtonText = useStyled('p', {
-	name: 'NoPropsButtonText',
-	// No props: ButtonProps
+export const NoContextButtonText = useStyled('p', {
+	name: 'NoContextButtonText',
+	// No context
 	base: 'font-medium',
 	variants: {
 		variant: {
@@ -200,22 +200,22 @@ export const NoPropsButtonText = useStyled('p', {
 	},
 })
 
-export const NoPropsButton = useStyledSlots(NoPropsButtonFrame, {
+export const NoContextButton = useStyledSlots(NoContextButtonFrame, {
 	slots: {
-		Text: NoPropsButtonText,
+		Text: NoContextButtonText,
 	},
-	// No props: ButtonProps
+	// No context
 })
 
-// Usage without useStyledProps - Props are propagated but not recognized
-const ExampleWithoutProps = () => {
+// Usage without useStyledContext - Props are propagated but not recognized
+const ExampleWithoutContext = () => {
 	return (
-		<NoPropsButton variant='primary' size='sm'>
-			{/* Props are propagated by useStyledSlots, but NoPropsButtonText 
-			    cannot apply styles based on them because it doesn't use props: ButtonProps */}
-			<NoPropsButton.Text>
+		<NoContextButton variant='primary' size='sm'>
+			{/* Props are propagated by useStyledSlots, but NoContextButtonText 
+			    cannot apply styles based on them because it doesn't use context */}
+			<NoContextButton.Text>
 				Click me (variant and size do not affect this text's style)
-			</NoPropsButton.Text>
-		</NoPropsButton>
+			</NoContextButton.Text>
+		</NoContextButton>
 	)
 }

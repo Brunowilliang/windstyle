@@ -1,0 +1,4 @@
+Styled Components - básico x 305,802 ops/sec ±2.79% (96 runs sampled)
+Emotion - básico x 198,381 ops/sec ±0.52% (97 runs sampled)
+use-styled - básico x 358,071 ops/sec ±0.32% (98 runs sampled)
+Mais rápido é use-styled - básico

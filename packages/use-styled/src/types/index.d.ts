@@ -1,5 +1,5 @@
 import type { ElementType, ReactElement, ComponentPropsWithRef } from 'react';
-import type { Props, TransformProps, ExtractPropDefinition } from '../useStyledProps';
+import type { Props, TransformProps, ExtractPropDefinition } from '../useStyledContext';
 
 export type HTMLTagName = keyof JSX.IntrinsicElements
 
@@ -113,7 +113,7 @@ export interface ComponentConfig<
   DefaultAs extends ElementType
 > {
   name?: string;
-  props?: ContextType extends TransformProps<any> ? ContextType : Record<string, any>;
+  context?: ContextType extends TransformProps<any> ? ContextType : Record<string, any>;
   base?: string;
   variants?: ContextType extends Props<infer D> 
     ? DirectVariantsMap<D> 

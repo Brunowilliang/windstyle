@@ -19,7 +19,7 @@ type StyledSlotsConfig<
 	SlotMap extends SlotMapType,
 > = {
 	slots: SlotMap // Map de slots
-	props?: ContextType // Props opcional para tipagem
+	context?: ContextType // Context opcional para tipagem
 }
 
 // Tipo para o componente final
@@ -42,15 +42,15 @@ export function useStyledSlots<
 	frameComponent: FrameComponent,
 	config: StyledSlotsConfig<ContextType, SlotMap>,
 ): FinalComponent<GetStyledProps<FrameComponent>, SlotMap> {
-	const { props, slots } = config
+	const { context, slots } = config
 
 	// Armazenar as props do componente pai para repassar aos filhos
 	let parentProps: Record<string, any> = {}
 
-	// Armazenar a referência às props no componente principal
-	if (props) {
+	// Armazenar a referência ao contexto no componente principal
+	if (context) {
 		// @ts-ignore - Adicionar propriedade interna
-		frameComponent[PROPS_REF_KEY] = props
+		frameComponent[PROPS_REF_KEY] = context
 	}
 
 	const FinalComponent = forwardRef<any, GetStyledProps<FrameComponent>>(
@@ -80,15 +80,15 @@ export function useStyledSlots<
 			const SlotWrapper = (slotProps: any) => {
 				let finalProps = { ...slotProps }
 
-				// Verificar se o componente slot usa a mesma props que o componente principal
-				const slotHasSameProps =
+				// Verificar se o componente slot usa o mesmo contexto que o componente principal
+				const slotHasSameContext =
 					// @ts-ignore - Acessar propriedade interna
-					props &&
+					context &&
 					// @ts-ignore - Acessar propriedade interna
-					OriginalSlotComponent[PROPS_REF_KEY] === props
+					OriginalSlotComponent[PROPS_REF_KEY] === context
 
-				// Só propaga as props do pai se o slot tiver as mesmas props
-				if (slotHasSameProps) {
+				// Só propaga as props do pai se o slot tiver o mesmo contexto
+				if (slotHasSameContext) {
 					// Mescla as props do pai com as props específicas do slot (prioridade para as props do slot)
 					finalProps = { ...parentProps, ...slotProps }
 				}

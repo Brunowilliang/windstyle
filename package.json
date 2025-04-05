@@ -2,16 +2,16 @@
   "name": "use-styled-workspace",
   "private": true,
   "workspaces": [
-    "lib",
-    "app",
-    "mobile"
+    "packages/*"
   ],
   "scripts": {
-    "build": "cd lib && yarn build && cd .. && yarn install",
-    "clean": "cd lib && yarn clean && cd .. && rm -rf app/.next",
-    "dev:lib": "cd lib && yarn dev",
-    "dev": "cd app && yarn dev",
-    "test": "cd lib && yarn test",
-    "publish:lib": "cd lib && yarn publish"
+    "build": "cd packages/use-styled && yarn build && cd .. && yarn install",
+    "dev:lib": "cd packages/use-styled && yarn dev",
+    "start:mobile": "cd apps/mobile && yarn start",
+    "remove:deps:mobile": "cd apps/mobile && yarn remove use-styled && yarn add file:../../packages/use-styled",
+    "start:web": "cd apps/web && yarn start",
+    "dev:mobile": "concurrently \"yarn remove:deps:mobile\" \"yarn start:mobile\"",
+    "dev:web": "cd packages/use-styled && yarn dev && yarn start:web",
+    "publish:lib": "cd packages/use-styled && yarn publish"
   }
 }

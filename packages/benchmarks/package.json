@@ -1,0 +1,24 @@
+{
+  "name": "use-styled-benchmarks",
+  "version": "1.0.0",
+  "description": "Benchmarks para a biblioteca use-styled",
+  "private": true,
+  "scripts": {
+    "start": "node benchmark-runner.js",
+    "render": "node render-benchmark.js",
+    "variants": "node variants-benchmark.js",
+    "slots": "node slots-benchmark.js",
+    "visualize": "node visualize-results.js"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "benchmark": "^2.1.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "styled-components": "^6.1.0",
+    "table": "^6.8.1",
+    "use-styled": "workspace:../use-styled"
+  },
+  "license": "MIT"
+}

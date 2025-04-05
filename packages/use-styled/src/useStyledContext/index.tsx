@@ -26,15 +26,15 @@ export type ExtractPropDefinition<T, K extends keyof T> = T[K] extends any[]
 				? string
 				: T[K]
 
-// Defines the type for props created by useStyledProps
+// Defines the type for context created by useStyledContext
 export type Props<T> = TransformProps<T> & { __definition: T }
 
 /**
- * useStyledProps: Creates variant props for a component
+ * useStyledContext: Creates context for component variants
  *
  * Accepts union types directly in the object:
  * ```tsx
- * const ButtonProps = useStyledProps({
+ * const ButtonContext = useStyledContext({
  *   // IMPORTANT: Always use 'as const' to preserve literal types!
  *   variant: ['primary', 'secondary', 'danger'] as const,  // String union
  *   size: ['sm', 'md', 'lg'] as const,                     // String union
@@ -48,7 +48,7 @@ export type Props<T> = TransformProps<T> & { __definition: T }
  * and show them correctly in editor suggestions when you're defining
  * variants in useStyled.
  */
-export const useStyledProps = <T extends Record<string, any>>(
+export const useStyledContext = <T extends Record<string, any>>(
 	definitions: T,
 ): Props<T> => {
 	// Converts type definitions into an object with default values

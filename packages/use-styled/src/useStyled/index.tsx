@@ -1,5 +1,35 @@
 import { createElement, forwardRef, ElementType, ReactElement } from 'react'
 
+// Importações condicionais em runtime
+let Platform: { OS?: string } = { OS: 'web' }
+try {
+	// @ts-ignore - Importação dinâmica em runtime
+	Platform = require('react-native').Platform || { OS: 'web' }
+} catch (e) {
+	// Se não conseguir importar react-native, assume que é web
+}
+
+// Função auxiliar para interoperar com NativeWind se disponível
+const withNativeWindInterop = (Component: ElementType): ElementType => {
+	try {
+		// Se estamos no ambiente nativo e o nativewind está instalado
+		if (Platform.OS !== 'web') {
+			try {
+				// @ts-ignore - Importação dinâmica em runtime
+				const nativewind = require('nativewind')
+				if (nativewind?.cssInterop) {
+					return nativewind.cssInterop(Component, { className: 'style' })
+				}
+			} catch (e) {
+				// NativeWind não disponível, apenas retorna o componente original
+			}
+		}
+	} catch (e) {
+		// Em caso de erro, retornar o componente original é seguro
+	}
+	return Component
+}
+
 import { evaluateClassName } from '../utils/evaluateClassName'
 import { cn } from '../utils/cn'
 import { PROPS_REF_KEY } from '../utils/constants'
@@ -54,7 +84,7 @@ export const useStyled: IStyled = function <
 ) {
 	const {
 		name,
-		props: configProps,
+		context: configContext,
 		base: defaultClassName,
 		variants: configVariants,
 		styleOnly,
@@ -105,6 +135,9 @@ export const useStyled: IStyled = function <
 		const Tag = (asProp || component) as ElementType
 		const isTag = typeof component === 'string'
 
+		// Usar nossa função auxiliar para aplicar cssInterop se disponível
+		const ComponentToRender = withNativeWindInterop(Tag)
+
 		const contextValues = {} as Partial<ContextTypeParam>
 
 		const variantKeys = Object.keys(variants)
@@ -137,24 +170,24 @@ export const useStyled: IStyled = function <
 
 		const finalClassName = cn(variantClasses, className)
 
-		const finalElementProps = {
-			...defaultProps,
-			...restProps,
-			...(isTag ? overrideVariantProps : overrideStyleOnlyProps),
+		// Nova abordagem: Passar explicitamente apenas props externas, ref e className
+		// As props originais (incluindo children) estão em restProps.
+		const minimalProps = {
+			...restProps, // Inclui props originais como 'children'
 			ref,
 			className: finalClassName || undefined,
 		}
 
-		return createElement(Tag, finalElementProps) as ReactElement<
-			any,
-			DefaultAsParam
-		>
+		// Adicionar defaultProps (se existirem) de forma segura
+		const finalMinimalProps = { ...defaultProps, ...minimalProps }
+
+		return <ComponentToRender {...finalMinimalProps} />
 	})
 
-	// Armazenar a referência às props no componente
-	if (configProps) {
+	// Armazenar a referência ao contexto no componente
+	if (configContext) {
 		// @ts-ignore - Adicionar propriedade interna
-		ForwardedComponent[PROPS_REF_KEY] = configProps
+		ForwardedComponent[PROPS_REF_KEY] = configContext
 	}
 
 	ForwardedComponent.displayName =

@@ -17,9 +17,7 @@ dist/
 .vercel/
 
 # teste
-teste
-teste_2
-teste_3
+old_packages/
 
 # Arquivos de ambiente
 .env
